@@ -1,0 +1,130 @@
+{
+  "name": "Auto-Format Hooks Collection",
+  "description": "Production-ready hooks for automatic code formatting",
+  "hooks": {
+    "auto-format-javascript": {
+      "event": "PostToolUse",
+      "matcher": {
+        "toolName": "Write|Edit",
+        "filePath": "\\.(js|jsx|ts|tsx)$"
+      },
+      "command": "npx prettier --write \"$FILE_PATH\"",
+      "description": "Auto-format JavaScript/TypeScript files after writing"
+    },
+    "auto-format-python": {
+      "event": "PostToolUse",
+      "matcher": {
+        "toolName": "Write|Edit",
+        "filePath": "\\.py$"
+      },
+      "command": "black \"$FILE_PATH\" && isort \"$FILE_PATH\"",
+      "description": "Auto-format Python files with Black and isort"
+    },
+    "auto-format-go": {
+      "event": "PostToolUse",
+      "matcher": {
+        "toolName": "Write|Edit",
+        "filePath": "\\.go$"
+      },
+      "command": "gofmt -w \"$FILE_PATH\"",
+      "description": "Auto-format Go files with gofmt"
+    },
+    "auto-format-rust": {
+      "event": "PostToolUse",
+      "matcher": {
+        "toolName": "Write|Edit",
+        "filePath": "\\.rs$"
+      },
+      "command": "rustfmt \"$FILE_PATH\"",
+      "description": "Auto-format Rust files with rustfmt"
+    },
+    "lint-on-save": {
+      "event": "PostToolUse",
+      "matcher": {
+        "toolName": "Write|Edit",
+        "filePath": "\\.(js|jsx|ts|tsx)$"
+      },
+      "command": "npx eslint --fix \"$FILE_PATH\"",
+      "description": "Run ESLint with auto-fix after writing"
+    },
+    "validate-json": {
+      "event": "PreToolUse",
+      "matcher": {
+        "toolName": "Write",
+        "filePath": "\\.json$"
+      },
+      "command": "echo '$CONTENT' | python -m json.tool > /dev/null",
+      "description": "Validate JSON before writing"
+    },
+    "prevent-env-commit": {
+      "event": "PreToolUse",
+      "matcher": {
+        "toolName": "Bash",
+        "command": "git (add|commit)"
+      },
+      "command": "! git diff --cached --name-only | grep -E '\\.(env|env\\.local|env\\.production)$'",
+      "description": "Prevent committing .env files"
+    },
+    "run-tests-after-edit": {
+      "event": "PostToolUse",
+      "matcher": {
+        "toolName": "Edit",
+        "filePath": "src/.*\\.(ts|tsx)$"
+      },
+      "command": "npm test -- --findRelatedTests \"$FILE_PATH\" --passWithNoTests",
+      "description": "Run related tests after editing source files"
+    },
+    "type-check-typescript": {
+      "event": "PostToolUse",
+      "matcher": {
+        "toolName": "Write|Edit",
+        "filePath": "\\.(ts|tsx)$"
+      },
+      "command": "npx tsc --noEmit \"$FILE_PATH\" 2>&1 | head -20",
+      "description": "Type-check TypeScript files after changes"
+    },
+    "security-scan-deps": {
+      "event": "PostToolUse",
+      "matcher": {
+        "toolName": "Write|Edit",
+        "filePath": "package\\.json$"
+      },
+      "command": "npm audit --audit-level=high",
+      "description": "Run security audit after package.json changes"
+    }
+  },
+  "settings_json_examples": {
+    "user_level": {
+      "path": "~/.claude/settings.json",
+      "content": {
+        "hooks": {
+          "PostToolUse": [
+            {
+              "matcher": "Write|Edit:.*\\.(js|ts)$",
+              "command": "npx prettier --write \"$FILE_PATH\""
+            }
+          ]
+        }
+      }
+    },
+    "project_level": {
+      "path": ".claude/settings.json",
+      "content": {
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash:git commit",
+              "command": "npm test"
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "Write:.*\\.py$",
+              "command": "black \"$FILE_PATH\""
+            }
+          ]
+        }
+      }
+    }
+  }
+}

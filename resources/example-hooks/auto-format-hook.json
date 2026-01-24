@@ -1,0 +1,165 @@
+{
+  "name": "Auto-Format Hook Configuration",
+  "description": "Automatically formats code after Write/Edit operations",
+  "hooks": {
+    "postToolUse": [
+      {
+        "name": "Format JavaScript/TypeScript",
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.{js,jsx,ts,tsx,mjs,cjs}"
+        },
+        "command": "prettier --write {{file_path}} && eslint {{file_path}} --fix",
+        "description": "Auto-format and lint JavaScript files after writing",
+        "continueOnError": true
+      },
+      {
+        "name": "Format JavaScript/TypeScript on Edit",
+        "match": {
+          "tool": "Edit",
+          "file_path": "**/*.{js,jsx,ts,tsx,mjs,cjs}"
+        },
+        "command": "prettier --write {{file_path}} && eslint {{file_path}} --fix",
+        "description": "Auto-format and lint JavaScript files after editing",
+        "continueOnError": true
+      },
+      {
+        "name": "Format Python",
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.py"
+        },
+        "command": "black {{file_path}} && isort {{file_path}}",
+        "description": "Auto-format Python files with black and isort",
+        "continueOnError": true
+      },
+      {
+        "name": "Format Python on Edit",
+        "match": {
+          "tool": "Edit",
+          "file_path": "**/*.py"
+        },
+        "command": "black {{file_path}} && isort {{file_path}}",
+        "description": "Auto-format Python files after editing",
+        "continueOnError": true
+      },
+      {
+        "name": "Format Rust",
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.rs"
+        },
+        "command": "rustfmt {{file_path}}",
+        "description": "Auto-format Rust files",
+        "continueOnError": true
+      },
+      {
+        "name": "Format Go",
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.go"
+        },
+        "command": "gofmt -w {{file_path}} && goimports -w {{file_path}}",
+        "description": "Auto-format Go files",
+        "continueOnError": true
+      },
+      {
+        "name": "Format JSON",
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.json"
+        },
+        "command": "prettier --write {{file_path}}",
+        "description": "Auto-format JSON files",
+        "continueOnError": true
+      },
+      {
+        "name": "Format YAML",
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.{yaml,yml}"
+        },
+        "command": "prettier --write {{file_path}}",
+        "description": "Auto-format YAML files",
+        "continueOnError": true
+      },
+      {
+        "name": "Format Markdown",
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.md"
+        },
+        "command": "prettier --write {{file_path}}",
+        "description": "Auto-format Markdown files",
+        "continueOnError": true
+      },
+      {
+        "name": "Format CSS/SCSS",
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.{css,scss,sass,less}"
+        },
+        "command": "prettier --write {{file_path}}",
+        "description": "Auto-format CSS files",
+        "continueOnError": true
+      },
+      {
+        "name": "Git Auto-Stage Formatted Files",
+        "match": {
+          "tool": "Edit",
+          "file_path": "src/**/*"
+        },
+        "command": "git add {{file_path}}",
+        "description": "Auto-stage files in src/ after editing",
+        "continueOnError": true
+      }
+    ]
+  },
+  "installation": {
+    "instructions": "Copy the hooks section to your .claude/settings.json file",
+    "prerequisites": {
+      "javascript": [
+        "npm install --save-dev prettier eslint"
+      ],
+      "python": [
+        "pip install black isort"
+      ],
+      "rust": [
+        "rustup component add rustfmt"
+      ],
+      "go": [
+        "go install golang.org/x/tools/cmd/goimports@latest"
+      ]
+    }
+  },
+  "notes": [
+    "continueOnError: true means the hook won't stop Claude if formatting fails",
+    "Adjust file patterns to match your project structure",
+    "Add language-specific formatters as needed",
+    "Consider performance - formatting large files may be slow"
+  ],
+  "advanced_options": {
+    "conditional_formatting": {
+      "description": "Only format if config file exists",
+      "example": {
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.js"
+        },
+        "command": "if [ -f .prettierrc ]; then prettier --write {{file_path}}; fi",
+        "description": "Format only if .prettierrc exists"
+      }
+    },
+    "notify_on_format": {
+      "description": "Show notification when formatting occurs",
+      "example": {
+        "match": {
+          "tool": "Write",
+          "file_path": "**/*.js"
+        },
+        "command": "prettier --write {{file_path}} && echo 'Formatted {{file_path}}'",
+        "description": "Format and notify"
+      }
+    }
+  }
+}
